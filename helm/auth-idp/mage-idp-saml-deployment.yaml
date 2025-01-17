@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: mage-idp-saml
+  name: mage-idp-saml
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mage-idp-saml
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: mage-idp-saml
+    spec:
+      containers:
+        - env:
+            - name: SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE
+              value: http://localhost:4242/auth/saml/callback
+            - name: SIMPLESAMLPHP_SP_ENTITY_ID
+              value: http://localhost:4242
+            - name: SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE
+              value: http://localhost:8080/simplesaml/module.php/saml/sp/saml2-logout.php/test-sp
+          image: kristophjunge/test-saml-idp
+          name: mage-idp-saml
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/www/simplesamlphp/config/authsources.php
+              name: mage-idp-saml-claim0
+      restartPolicy: Always
+      volumes:
+        - name: mage-idp-saml-claim0
+          persistentVolumeClaim:
+            claimName: mage-idp-saml-claim0

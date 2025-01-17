@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: mage-idp-ldap
+  name: mage-idp-ldap
+spec:
+  ports:
+    - name: "389"
+      port: 389
+      targetPort: 389
+    - name: "636"
+      port: 636
+      targetPort: 636
+  selector:
+    io.kompose.service: mage-idp-ldap

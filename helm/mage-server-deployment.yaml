@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: mage-server
+  name: mage-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mage-server
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: mage-server
+    spec:
+      containers:
+        - env:
+            - name: MAGE_MONGO_URL
+              value: mongodb://mage-db:27017/magedb
+            - name: MAGE_TOKEN_EXPIRATION
+              value: "28800"
+          image: mage-server:6.2.0
+          name: mage-server
+          ports:
+            - containerPort: 4242
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/mage
+              name: mage-server-claim0
+      restartPolicy: Always
+      volumes:
+        - name: mage-server-claim0
+          persistentVolumeClaim:
+            claimName: mage-server-claim0

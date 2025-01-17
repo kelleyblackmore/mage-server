@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: mage-server
+  name: mage-server
+spec:
+  ports:
+    - name: "4242"
+      port: 4242
+      targetPort: 4242
+  selector:
+    io.kompose.service: mage-server

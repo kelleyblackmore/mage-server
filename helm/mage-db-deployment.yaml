@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: mage-db
+  name: mage-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mage-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: mage-db
+    spec:
+      containers:
+        - args:
+            - --logpath
+            - /var/log/mongodb/mongodb.log
+          image: mongo:4.4-focal
+          name: mage-db
+          volumeMounts:
+            - mountPath: /data/db
+              name: mage-db-claim0
+            - mountPath: /var/log/mongodb
+              name: mage-db-claim1
+      restartPolicy: Always
+      volumes:
+        - name: mage-db-claim0
+          persistentVolumeClaim:
+            claimName: mage-db-claim0
+        - name: mage-db-claim1
+          persistentVolumeClaim:
+            claimName: mage-db-claim1

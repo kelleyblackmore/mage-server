@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: mage-idp-ldap
+  name: mage-idp-ldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mage-idp-ldap
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: mage-idp-ldap
+    spec:
+      containers:
+        - env:
+            - name: LDAP_ADMIN_PASSWORD
+              value: i found something
+            - name: LDAP_DOMAIN
+              value: wgd.com
+            - name: LDAP_ORGANISATION
+              value: World's Greatest Detectives Inc.
+          image: osixia/openldap:1.5.0
+          name: mage-idp-ldap
+          ports:
+            - containerPort: 389
+              protocol: TCP
+            - containerPort: 636
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/ldap
+              name: mage-idp-ldap-claim0
+            - mountPath: /etc/ldap/slapd.d
+              name: mage-idp-ldap-claim1
+      restartPolicy: Always
+      volumes:
+        - name: mage-idp-ldap-claim0
+          persistentVolumeClaim:
+            claimName: mage-idp-ldap-claim0
+        - name: mage-idp-ldap-claim1
+          persistentVolumeClaim:
+            claimName: mage-idp-ldap-claim1
