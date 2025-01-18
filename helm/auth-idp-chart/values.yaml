@@ -1,0 +1,30 @@
+
+# Values for auth IDP services
+ldap:
+  image: osixia/openldap:1.5.0
+  organization: "World's Greatest Detectives Inc."
+  domain: "wgd.com"
+  adminPassword: "i found something"
+  persistence:
+    enabled: true
+    db:
+      size: 1Gi
+    config:
+      size: 100Mi
+
+ldapUI:
+  image: osixia/phpldapadmin:latest
+  service:
+    type: ClusterIP
+    port: 80
+
+saml:
+  image: kristophjunge/test-saml-idp
+  entityID: "http://localhost:4242"
+  assertionService: "http://localhost:4242/auth/saml/callback"
+  logoutService: "http://localhost:8080/simplesaml/module.php/saml/sp/saml2-logout.php/test-sp"
+  service:
+    type: ClusterIP
+    ports:
+      http: 8080
+      https: 8443

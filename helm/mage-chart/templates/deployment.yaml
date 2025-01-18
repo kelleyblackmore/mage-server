@@ -1,0 +1,33 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-mage-server
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: mage-server
+  template:
+    metadata:
+      labels:
+        app: mage-server
+    spec:
+      containers:
+      - name: mage-server
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 4242
+        env:
+        - name: MAGE_MONGO_URL
+          value: {{ .Values.mongodb.url }}
+        - name: MAGE_TOKEN_EXPIRATION  
+          value: {{ .Values.tokenExpiration | quote }}
+        volumeMounts:
+        - name: resources
+          mountPath: /var/lib/mage
+      volumes:
+      - name: resources
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-mage-resources

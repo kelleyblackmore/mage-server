@@ -1,0 +1,29 @@
+# Default values for mage-server
+replicaCount: 1
+
+image:
+  repository: mage-server
+  tag: "6.2.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 4242
+
+mongodb:
+  url: "mongodb://mage-db:27017/magedb"
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+persistence:
+  enabled: true
+  resources:
+    size: 1Gi
+    
+tokenExpiration: "28800"

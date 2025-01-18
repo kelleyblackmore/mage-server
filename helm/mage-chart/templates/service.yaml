@@ -1,0 +1,14 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-mage-server
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: 4242
+    protocol: TCP
+    name: http
+  selector:
+    app: mage-server
